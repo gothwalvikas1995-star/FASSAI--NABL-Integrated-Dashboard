@@ -57,6 +57,14 @@ button,select,input{font:inherit;color:inherit}
 .userbtn .ut{font-weight:700;color:var(--ink);font-size:1rem}
 .userbtn .us{font-size:.8rem;color:var(--ink-2);margin-top:1px}
 .login-foot{margin-top:20px;font-size:.78rem;color:var(--ink-3)}
+.demo{margin-top:18px;border:1px dashed var(--brand-2);border-radius:10px;background:var(--surface-2);text-align:left}
+.demo summary{cursor:pointer;padding:10px 14px;font-weight:700;font-size:.9rem;color:var(--brand)}
+.demo .dnote{margin:0 14px 8px;font-size:.78rem;color:var(--ink-2)}
+.demo .dlist{display:flex;flex-direction:column;max-height:230px;overflow-y:auto;border-top:1px solid var(--line)}
+.demo .drow{display:grid;grid-template-columns:78px 1fr;gap:2px 8px;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:7px 14px;cursor:pointer;font-size:.8rem;color:var(--ink)}
+.demo .drow:hover{background:var(--r1)}
+.demo .drow b{grid-row:1/3;align-self:center;color:var(--brand)}
+.demo .drow code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.78rem;color:var(--ink-2);word-break:break-all}
 .loginform{display:flex;flex-direction:column;gap:6px;text-align:left}
 .loginform label{font-size:.82rem;font-weight:600;color:var(--ink-2);margin-top:8px}
 .loginform input{padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);width:100%;font-size:1rem;color:var(--ink)}
@@ -316,6 +324,11 @@ footer a{color:var(--brand-2)}
       <button type="submit" class="loginbtn" id="loginBtn">Sign in</button>
     </form>
     <p class="login-foot">Each regulator signs in with its own account and sees only the labs it recognises.</p>
+    <details class="demo" open>
+      <summary>Demo accounts</summary>
+      <p class="dnote">Prototype only. Select an account to fill the form, then press Sign in.</p>
+      <div class="dlist" id="demoList"></div>
+    </details>
   </div>
 </div>
 
@@ -553,6 +566,10 @@ async function sha256hex(s){
   return sha256Fallback(s);
 }
 const loginForm=document.getElementById('loginForm'),loginEmail=document.getElementById('loginEmail'),loginPass=document.getElementById('loginPass'),loginErr=document.getElementById('loginErr'),loginBtn=document.getElementById('loginBtn');
+const DEMO = [{"name": "Admin", "email": "admin@nabl.test", "pw": "cxqVm-AhyMx"}, {"name": "FSSAI", "email": "fssai@nabl.test", "pw": "grLtx-55Vx4"}, {"name": "EIC", "email": "eic@nabl.test", "pw": "UQ7xm-3UFXC"}, {"name": "APEDA", "email": "apeda@nabl.test", "pw": "pXdYz-Mb8Sh"}, {"name": "Tea Board", "email": "teaboard@nabl.test", "pw": "AVqYU-gRTs6"}, {"name": "Spices Board", "email": "spicesboard@nabl.test", "pw": "LPPnX-ijder"}, {"name": "IOPEPC", "email": "iopepc@nabl.test", "pw": "2NLBB-Zwm4C"}, {"name": "CDB", "email": "cdb@nabl.test", "pw": "Wmigx-gJ4CD"}, {"name": "SHEFEXIL", "email": "shefexil@nabl.test", "pw": "cTP59-3iqGc"}];
+document.getElementById('demoList').innerHTML = DEMO.map((d,i)=>`<button type="button" class="drow" data-i="${i}" aria-label="Fill sign-in form for ${esc(d.name)}"><b>${esc(d.name)}</b><code>${esc(d.email)}</code><code>${esc(d.pw)}</code></button>`).join('');
+document.getElementById('demoList').addEventListener('click',e=>{const b=e.target.closest('.drow'); if(!b) return; const d=DEMO[+b.dataset.i];
+  loginEmail.value=d.email; loginPass.value=d.pw; loginErr.textContent=''; loginBtn.focus();});
 document.getElementById('togglePass').onclick=e=>{const show=loginPass.type==='password';loginPass.type=show?'text':'password';e.target.textContent=show?'Hide':'Show';e.target.setAttribute('aria-label',show?'Hide password':'Show password')};
 loginForm.addEventListener('submit',async e=>{
   e.preventDefault();loginErr.textContent='';
@@ -661,7 +678,7 @@ function renderCross(){
   const rows=REGS.filter(r=>r.k!==centerKey).map(r=>({r,g:base.filter(l=>l.regs.includes(r.k))})).filter(x=>x.g.length>0).sort((a,b)=>b.g.length-a.g.length);
   const max=Math.max(1,...rows.map(x=>x.g.length));
   document.getElementById('crossTitle').textContent=`Other regulators recognising these ${centerKey} labs`;
-  document.getElementById('crossSub').textContent=`${base.length} labs in the current view have ${centerKey} recognition; ${rows.length} other regulator${rows.length===1?'':'s'} also recognise at least one of them. Select a regulator to list those labs.`;
+  document.getElementById('crossSub').textContent=`${base.length} lab${base.length===1?'':'s'} in the current view ${base.length===1?'has':'have'} ${centerKey} recognition; ${rows.length} other regulator${rows.length===1?'':'s'} also recognise at least one of them. Select a regulator to list those labs.`;
   const el=document.getElementById('crossBars'); el.innerHTML='';
   if(!rows.length){el.innerHTML='<div class="empty">No cross-recognition with other regulators in the current view.</div>';document.getElementById('crossList').innerHTML='';return}
   rows.forEach(({r,g})=>{

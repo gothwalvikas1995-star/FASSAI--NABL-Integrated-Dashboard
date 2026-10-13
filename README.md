@@ -1,15 +1,22 @@
-# FSSAI–NABL Integrated Dashboard
+# NABL Integrated Labs — Regulator Dashboard
 
-Interactive dashboard for NABL-integrated laboratories and the regulators that recognise them, with an India map drill-down, scope filters, cross-regulator recognition view and regulator-specific sign-in.
+Interactive dashboard of NABL-accredited laboratories with regulator recognition (FSSAI, EIC, APEDA, Tea Board, Spices Board, IOPEPC, CDB, SHEFEXIL): India map with state/district drill-down, scope filters, cross-regulator recognition view and clickable KPIs.
 
-Served via GitHub Pages from the `main` branch (`index.html`).
+**Single static file** — `index.html` contains all code and data, no build step.
 
-## Sign-in (prototype)
+## Demo accounts (prototype only)
 
-Nine accounts exist (Admin plus one per regulator). Each regulator sees only the labs it recognises; Admin sees the full register.
+The login screen lists the demo accounts; select one to fill the form.
 
-Accounts are defined in the `USERS` list inside `index.html` as `{role, email, salt, hash}` where `hash = SHA-256(salt:email:password)`. To change a password, recompute the hash, e.g.:
+| Profile | Email | Sees |
+|---|---|---|
+| Admin | admin@nabl.test | all labs |
+| FSSAI, EIC, APEDA, Tea Board, Spices Board, IOPEPC, CDB, SHEFEXIL | `<regulator>@nabl.test` (e.g. `fssai@nabl.test`) | only the labs that regulator recognises |
 
-    python3 -c "import hashlib;print(hashlib.sha256(b'SALT:email@example.org:NEWPASSWORD').hexdigest())"
+The sign-in check runs in the browser, so this is a demo and not a security boundary: all lab data is in the page source.
 
-Note: the check runs in the browser and the lab data is bundled in the same file, so this is a presentation-level gate, not access control. Use a server-side login before sharing data that must stay restricted.
+## Hosting
+
+- **GitHub Pages:** serves `index.html` from the `main` branch root.
+- **Vercel:** import this repository in Vercel (framework preset "Other", no build command, output directory = repository root), or use the one-click link:
+  https://vercel.com/new/clone?repository-url=https://github.com/gothwalvikas1995-star/FASSAI--NABL-Integrated-Dashboard
