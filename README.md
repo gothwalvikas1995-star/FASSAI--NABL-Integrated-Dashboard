@@ -20,3 +20,11 @@ The sign-in check runs in the browser, so this is a demo and not a security boun
 - **GitHub Pages:** serves `index.html` from the `main` branch root.
 - **Vercel:** import this repository in Vercel (framework preset "Other", no build command, output directory = repository root), or use the one-click link:
   https://vercel.com/new/clone?repository-url=https://github.com/gothwalvikas1995-star/FASSAI--NABL-Integrated-Dashboard
+
+## Changing a demo password
+
+Accounts are defined in the `USERS` list inside `index.html` as `{role, email, salt, hash}` where `hash = SHA-256(salt:email:password)`. To change a password, recompute the hash, e.g.:
+
+    python3 -c "import hashlib;print(hashlib.sha256(b'SALT:email@example.org:NEWPASSWORD').hexdigest())"
+
+The demo list shown on the login screen (`DEMO` in `index.html`) must be updated to match.
